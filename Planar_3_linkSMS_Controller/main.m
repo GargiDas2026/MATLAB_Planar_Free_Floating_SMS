@@ -1,5 +1,5 @@
 clc; clear; close all;
-
+set(groot,'defaultFigureWindowStyle','normal')
 %% q1 variation
 q0 = [0; 0; 0]; % with j1 = 0; j2 = 0; j3 =0;
 N_r_b_0 = Calc_rb(q0);
