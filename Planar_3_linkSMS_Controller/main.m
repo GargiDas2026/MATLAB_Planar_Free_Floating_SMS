@@ -18,7 +18,7 @@ t = 20;
 tspan = (0:dt:t)';
 
 %% Choose which control you want to run
-ctrl_pref = 0; % 0 = PID, 1 = SMC
+ctrl_pref = 1; % 0 = PID, 1 = SMC
 
 tic
 if ctrl_pref ==0
