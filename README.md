@@ -6,4 +6,5 @@ In this work we will try to do the following steps for whole understanding of a 
 5. Model based Sliding mode control that takes into account the dynamic coupling will be derived and implemented
 
 
-Derivation of Equation of Motion of Space Manipulator System:
+\textbf{Derivation of Equation of Motion of Space Manipulator System:}
+
