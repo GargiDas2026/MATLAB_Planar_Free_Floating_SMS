@@ -1,18 +1,50 @@
-
 function tau = MPC_Controller(x0,param)
-% USER MUST COMPLETE COST FUNCTION WEIGHTS IF DESIRED
+
 Np = param.Np;
-dt = param.dt;
 tau_max = param.tau_max(:);
-U0 = zeros(3*Np,1);
+
+%% ---------- Warm Start ----------
+
+persistent U_prev
+
+if isempty(U_prev)
+
+    U0 = zeros(3*Np,1);
+
+else
+
+    U0 = [U_prev(4:end);
+          U_prev(end-2:end)];
+
+end
+
+%% ---------- Bounds ----------
+
 LB = repmat(-tau_max,Np,1);
 UB = repmat( tau_max,Np,1);
 
-opts = optimoptions('fmincon','Algorithm','sqp','Display','off',...
+%% ---------- Optimizer ----------
+
+opts = optimoptions('fmincon',...
+    'Algorithm','sqp',...
+    'Display','off',...
     'MaxFunctionEvaluations',5e4);
 
-U = fmincon(@(U) CostFunction(U,x0,param),U0,...
-    [],[],[],[],LB,UB,[],opts);
+%% ---------- Solve ----------
+
+U = fmincon(@(U) CostFunction(U,x0,param),...
+            U0,...
+            [],[],[],[],...
+            LB,UB,...
+            [],...
+            opts);
+
+%% ---------- Save optimum ----------
+
+U_prev = U;
+
+%% ---------- Apply first control ----------
 
 tau = U(1:3);
+
 end
