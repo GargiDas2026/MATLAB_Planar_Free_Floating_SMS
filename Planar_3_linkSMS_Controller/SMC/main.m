@@ -18,7 +18,7 @@ t = 20;
 tspan = (0:dt:t)';
 
 %% Choose which control you want to run
-ctrl_pref = 1; % 0 = PID, 1 = SMC
+ctrl_pref = 1; % 0 = PID, 1 = SMC %% Keep it always 1, in this folder we don't have PID files. If you want to run PID files just copy paste the controller and rk4t file.
 
 tic
 if ctrl_pref ==0
