@@ -1,29 +1,34 @@
-function [dPhidt, tau_q, S] = SMS_dynamics_MPC(state, tau_q)
+function f = SMS_Model_Casadi()
+
+import casadi.*
+
+%% Symbolic variables
+x = MX.sym('x',18);
+u_q = MX.sym('u',3);
+
+%% Extract states
+
+Phi  = x(1:9);
+dPhi = x(10:18);
 
 %including parameters
 param;
-Phi = state(1:9);
-dPhi = state(10:18);
-
-q = state(7:9);
-q_dot = state(16:18);
-
 
 %% For symbolic testing %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-t1 = Phi(1); % x
-t2 = Phi(2); % y
-t3 = Phi(3); % z
-t4 = Phi(4); % roll
-t5 = Phi(5); % pitch
+% t1 = Phi(1); % x
+% t2 = Phi(2); % y
+% t3 = Phi(3); % z
+% t4 = Phi(4); % roll
+% t5 = Phi(5); % pitch
 t6 = Phi(6); % yaw
 t7 = Phi(7); % q1
 t8 = Phi(8); % q2
 t9 = Phi(9); % q3
 
 
-t1dot = dPhi(1);
-t2dot = dPhi(2);
-t3dot = dPhi(3);
+% t1dot = dPhi(1);
+% t2dot = dPhi(2);
+% t3dot = dPhi(3);
 t4dot = dPhi(4);
 t5dot = dPhi(5);
 t6dot = dPhi(6);
@@ -83,18 +88,17 @@ C_dPhi=[- (l_1*m_1*cos(t6 + t7)*t6dot^2)/2 - (l_1*m_1*cos(t6 + t7)*t7dot^2)/2 - 
 
 
 
-
-
-
-
-
-
-tau =[0; 0; 0; 0; 0; 0; tau_q];
+tau =[0; 0; 0; 0; 0; 0; u_q];
 
 
 % Compute accelerations
 ddPhi = H \ (tau - C_dPhi);
-dPhidt = [dPhi; ddPhi];
+% dPhidt = [dPhi; ddPhi];
+xdot = [dPhi;
+        ddPhi];
 
-% disp(t);
+%% Create CasADi function
+
+f = Function('f',{x,u_q},{xdot});
+
 end
