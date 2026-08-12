@@ -12,7 +12,7 @@ dstate_0 = [zeros(6,1);0; 0; 0];
 state0 = [state_0; dstate_0];
 
 
-param.Np = 15;
+param.Np = 12;%15
 param.dt = 0.01;
 param.tau_max=[5;2.5;2.5];
 param.Q = diag([0 0 0 0 0 0 200 150 150 0 0 0 0 0 0 20 20 20]);
@@ -29,9 +29,13 @@ Tau=zeros(3,N);
 tic
 %% To run the PID control
 for k=1:N
-    tau = MPC_Controller(X(:,k),param);
+    tau = MPC_Controller_Casadi(X(:,k),param);
     Tau(:,k)=tau;
     X(:,k+1)=rk4t_MPC(@SMS_dynamics_MPC,X(:,k),tau,param.dt);
+
+    % f = SMS_Model_Casadi();
+    % 
+    % X(:,k+1) = rk4t_Casadi(f,X(:,k),tau,param.dt);
 
     disp(k);
 end

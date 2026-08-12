@@ -4,6 +4,8 @@ In this work we will try to do the following steps for whole understanding of a 
 3. Conservation of momentum will be tested
 4. Joint space and Cartesian space (task space) PID control will be designed
 5. Model based Sliding mode control that takes into account the dynamic coupling will be derived and implemented
+6. Traditional NMPC is designed first.
+7. NMPC using CasAdi and IPOPT is designed.
 
 
 The complete derivation of the free-floating space manipulator equations of motion is available here.
