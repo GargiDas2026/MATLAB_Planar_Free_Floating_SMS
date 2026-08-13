@@ -126,39 +126,39 @@ $$
 
 where
 
-\[
+$$
 q =
 \begin{bmatrix}
 q_1 & q_2 & q_3
 \end{bmatrix}^T
-\]
+$$
 
 is the manipulator joint configuration.
 
 The controller parameters are
 
-\[
+$$
 K_p = \mathrm{diag}(1,1,1),
 \qquad
 K_d = \mathrm{diag}(0.5,0.5,0.5).
-\]
+$$
 
 The desired configuration used in the baseline simulation is
 
-\[
+$$
 q_d =
 \begin{bmatrix}
 -0.523599\\
 0\\
 0
 \end{bmatrix}
-\]
+$$
 
 corresponding approximately to
 
-\[
+$$
 q_d=[-30^\circ,\ 0^\circ,\ 0^\circ]^T,
-\]
+$$
 
 with zero desired joint velocity.
 
@@ -171,30 +171,30 @@ with zero desired joint velocity.
 
 Only the three manipulator joints are actuated:
 
-\[
+$$
 \tau =
 \begin{bmatrix}
 0_{6\times1}\\
 \tau_q
 \end{bmatrix}.
-\]
+$$
 
 The spacecraft base is therefore unactuated and its motion arises from
 the coupled SMS dynamics.
 
 The generalized acceleration is obtained from
 
-\[
+$$
 \ddot{\Phi}
 =
 H^{-1}
 \left(
 \tau-C_{\dot{\Phi}}
 \right),
-\]
+$$
 
-where \(H\) is the generalized inertia matrix and
-\(C_{\dot{\Phi}}\) contains the velocity-dependent dynamic terms.
+where $(H)$ is the generalized inertia matrix and
+$(C_{\dot{\Phi}})$ contains the velocity-dependent dynamic terms.
 
 ### Simulation
 
