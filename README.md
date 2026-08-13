@@ -303,7 +303,7 @@ The joint angular velocities decay toward zero as the manipulator reaches its co
 
 The required joint torques are largest during the initial transient and subsequently decay toward zero as the joint tracking error and joint rates decrease.
 
-![PID control torque](Results/PID/joint_control_torque.png)
+![PID control torque](Planar_3_linkSMS_Controller/Results/PID/joint_control_torque.png)
 
 #### Kinetic Energy
 
@@ -361,7 +361,7 @@ The maximum conservation errors obtained in the simulation are:
 
 | Quantity | $(dt)$ | $(dt/2)$ |
 |:--|--:|--:|
-| $(\max_t\|\Delta P\|$) | \(6.21\times10^{-5}\) kg·m/s | \(3.88\times10^{-6}\) kg·m/s |
+| $(\max_t|\Delta P|$) | \(6.21\times10^{-5}\) kg·m/s | \(3.88\times10^{-6}\) kg·m/s |
 | \(\max_t\|\Delta M\|\) | \(4.46\times10^{-9}\) kg·m²/s | \(3.01\times10^{-10}\) kg·m²/s |
 
 The final errors for the reduced timestep case are
