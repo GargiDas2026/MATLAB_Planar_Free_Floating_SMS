@@ -361,8 +361,8 @@ The maximum conservation errors obtained in the simulation are:
 
 | Quantity | $(dt)$ | $(dt/2)$ |
 |:--|--:|--:|
-| $(\max_t\|\Delta P\|$) | $(6.21\times10^{-5})$ kg·m/s | $(3.88\times10^{-6})$ kg·m/s |
-| \(\max_t\|\Delta M\|\) | \(4.46\times10^{-9}\) kg·m²/s | \(3.01\times10^{-10}\) kg·m²/s |
+| $(\max_t\|\Delta P\|$) | $6.21\times10^{-5}$ kg·m/s | $3.88\times10^{-6}$ kg·m/s |
+| $(\max_t\|\Delta M\|$) | $4.46\times10^{-9}$ kg·m²/s | $3.01\times10^{-10}$ kg·m²/s |
 
 The final errors for the reduced timestep case are
 
