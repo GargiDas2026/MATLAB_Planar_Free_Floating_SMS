@@ -12,13 +12,13 @@ dstate_0 = [zeros(6,1);0; 0; 0];
 state0 = [state_0; dstate_0];
 
 
-param.Np = 12;%15
+param.Np = 12;
 param.dt = 0.01;
 param.tau_max=[5;2.5;2.5];
 param.Q = diag([0 0 0 0 0 0 200 150 150 0 0 0 0 0 0 20 20 20]);
 param.R = diag([0.01 0.01 0.01]);
 param.xref=zeros(18,1);
-param.xref(7)= 0.872665;  % 50 deg % -0.523599 : -30 deg
+param.xref(7)= 0.872665;  % 50 deg %% -0.523599 : -30 deg
 
 Tf=10;
 tspan = (0:param.dt:Tf)';

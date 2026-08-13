@@ -95,7 +95,7 @@ nlp = struct( ...
     'p', P);
 
 %% =========================================================
-% IPOPT options
+% IPOPT options - if anyone want to run IPOPT
 %% =========================================================
 
 % opts = struct;
@@ -106,16 +106,6 @@ nlp = struct( ...
 % opts.ipopt.max_iter = 100;
 % opts.ipopt.tol = 1e-4;
 
-% opts = struct;
-% 
-% opts.ipopt.print_level = 5;
-% opts.print_time = 1;
-% opts.ipopt.max_iter = 100;
-% opts.ipopt.tol = 1e-4;
-% 
-% % Use L-BFGS approximation instead of exact Hessian
-% opts.ipopt.hessian_approximation = 'limited-memory';
-% 
 % %% =========================================================
 % % Create solver
 % %% =========================================================
@@ -130,16 +120,6 @@ nlp = struct( ...
 % SQP solver options
 %% =========================================================
 
-% opts = struct;
-% 
-% opts.print_header = false; %true
-% opts.print_iteration = false; %true
-% 
-% opts.max_iter = 50;
-% % opts.hessian_approximation = 'limited-memory';
-% 
-% opts.qpsol = 'qrqp';
-
 opts = struct;
 
 %% SQP output
@@ -147,9 +127,6 @@ opts.print_header    = false;
 opts.print_iteration = false;
 opts.print_status    = false;
 opts.print_time       = false;
-
-
-
 opts.max_iter = 50;
 
 %% QP solver
