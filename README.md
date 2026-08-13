@@ -3,7 +3,8 @@
        alt="Planar free-floating space manipulator system"
        width="700">
 </p>
-# Planar Free-Floating Space Manipulator: Modeling and Control
+
+## Planar Free-Floating Space Manipulator: Modeling and Control
 
 This repository contains the modeling, simulation, and control implementation of a planar free-floating Space Manipulator System (SMS) with a three-link robotic manipulator mounted on a freely floating spacecraft base.
 
@@ -189,14 +190,14 @@ $$\ddot{\Phi} = H^{-1}(\tau - C_{\dot{\Phi}})$$
 where $(H)$ is the generalized inertia matrix and
 $(C_{\dot{\Phi}})$ contains the velocity-dependent dynamic terms.
 
-### Simulation
+## Simulation
 
 The nonlinear dynamics are integrated using a custom fourth-order
 Runge–Kutta (RK4) implementation with
 
-\[
+$$
 \Delta t = 0.01\ {\rm s}
-\]
+$$
 
 over a 20-second simulation.
 
@@ -213,7 +214,7 @@ The simulation records:
 - linear momentum
 - angular momentum
 
-### Files
+## Files
 
 | File | Description |
 |---|---|
