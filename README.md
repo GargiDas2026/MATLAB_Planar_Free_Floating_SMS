@@ -224,7 +224,7 @@ The simulation records:
 | `SMS_dynamics_PID.m` | Implements the nonlinear coupled SMS dynamics and PD controller |
 | `rk4t_PID.m` | Fourth-order Runge–Kutta integration |
 
-### Simulation Workflow
+## Simulation Workflow
 
 ```text
 Initial manipulator configuration
@@ -244,12 +244,13 @@ Initial manipulator configuration
       Updated system state
             ↓
         Repeat in time
+        
+```
 
         
-
 For the demonstrated simulation, the objective is to move the manipulator from its initial configuration to the prescribed joint-angle reference while observing the resulting reaction motion of the free-floating spacecraft base.
 
-### Simulation Results
+## Simulation Workflow
 
 The PID simulation demonstrates the dynamic coupling between the manipulator and the free-floating spacecraft base.
 
