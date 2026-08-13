@@ -184,14 +184,7 @@ the coupled SMS dynamics.
 
 The generalized acceleration is obtained from
 
-$$
-\ddot{\Phi}
-=
-H^{-1}
-\left(
-\tau - C_{\dot{\Phi}}
-\right)
-$$
+$$\ddot{\Phi} = H^{-1}(\tau - C_{\dot{\Phi}})$$
 
 where $(H)$ is the generalized inertia matrix and
 $(C_{\dot{\Phi}})$ contains the velocity-dependent dynamic terms.
