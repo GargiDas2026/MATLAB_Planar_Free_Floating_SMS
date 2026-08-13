@@ -189,8 +189,8 @@ $$
 =
 H^{-1}
 \left(
-\tau-C_{\dot{\Phi}}
-\right),
+\tau - C_{\dot{\Phi}}
+\right)
 $$
 
 where $(H)$ is the generalized inertia matrix and
