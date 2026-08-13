@@ -119,10 +119,10 @@ the free-floating system.
 
 The implemented controller is
 
-\[
+$$
 \tau_q =
 K_p(q_d-q) + K_d(\dot q_d-\dot q),
-\]
+$$
 
 where
 
