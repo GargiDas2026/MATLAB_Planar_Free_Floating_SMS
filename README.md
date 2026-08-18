@@ -612,51 +612,51 @@ K_s\mathrm{sat}
 
 which can be separated into an equivalent and switching component:
 
-$$
+```math
 \tau_q
 =
 \tau_{\mathrm{eq}}
 +
 \tau_{\mathrm{sw}}
-$$
+```
 
 with
 
-$$
+```math
 \tau_{\mathrm{eq}}
 =
 C_r-H_r\Lambda\dot e
-$$
+```
 
 and
 
-$$
+```math
 \tau_{\mathrm{sw}}
 =
 -H_rK_s
-\operatorname{sat}
+\mathrm{sat}
 \left(
 \frac{s}{\phi_s}
 \right).
-$$
+```
 
 ### Boundary-Layer Switching
 
 To reduce the high-frequency chattering associated with the ideal sign function, the discontinuous switching term is replaced by a saturation function:
 
-$$
-\operatorname{sat}(z)=
+```math
+\mathrm{sat}(z)=
 \begin{cases}
 -1, & z<-1\\
 z, & |z|\leq1\\
 1, & z>1.
 \end{cases}
-$$
+```
 
 The resulting implementation is
 
-$$
-\operatorname{sat}
+```math
+\mathrm{sat}
 \left(
 \frac{s_i}{\phi_{s,i}}
 \right)
@@ -666,7 +666,7 @@ $$
 \dfrac{s_i}{\phi_{s,i}}, & |s_i|\leq\phi_{s,i}\\
 1, & s_i>\phi_{s,i}.
 \end{cases}
-$$
+```
 
 The selected SMC parameters are
 
@@ -674,21 +674,21 @@ $$
 \Lambda=5I_3,
 $$
 
-$$
+```math
 K_s=
 \begin{bmatrix}
 2\\2\\2
 \end{bmatrix},
-$$
+```
 
 and
 
-$$
+```math
 \phi_s=
 \begin{bmatrix}
 0.05\\0.05\\0.05
 \end{bmatrix}.
-$$
+```
 
 The commanded joint torques are additionally constrained by the actuator limits
 
