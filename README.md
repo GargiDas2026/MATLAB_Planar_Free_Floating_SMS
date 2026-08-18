@@ -940,3 +940,42 @@ R=
 ```
 
 Therefore, the MPC primarily penalizes manipulator joint-position error and joint velocity, while the spacecraft base states are not directly included in the tracking cost. The control penalty discourages unnecessarily large joint torques. 
+
+### Actuator Constraints
+
+The optimization explicitly considers the available joint-torque limits:
+
+```math
+-\tau_{\max}\leq u_i\leq\tau_{\max}
+```
+
+with
+
+```math
+\tau_{\max}
+=
+\begin{bmatrix}
+5\\
+2.5\\
+2.5
+\end{bmatrix}
+\mathrm{Nm}.
+```
+
+Thus,
+
+```math
+-5\leq\tau_1\leq5~\mathrm{Nm},
+```
+
+```math
+-2.5\leq\tau_2\leq2.5~\mathrm{Nm},
+```
+
+and
+
+```math
+-2.5\leq\tau_3\leq2.5~\mathrm{Nm}.
+```
+
+The torque limits are imposed over the entire prediction horizon. No explicit state constraints are included in this implementation. 
