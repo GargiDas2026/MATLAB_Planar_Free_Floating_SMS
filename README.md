@@ -1128,3 +1128,15 @@ u_k&=u_0^\ast.
 The implemented controller uses a 15-step prediction horizon with a 0.01 s sampling interval, corresponding to a 0.15 s prediction window. The nonlinear SMS dynamics are propagated using fourth-order Runge-Kutta integration, and the resulting constrained optimization problem is solved using MATLAB's SQP-based `fmincon` solver.
 
 The controller therefore moves from instantaneous feedback control toward **optimization-based predictive control**, while explicitly accounting for the nonlinear coupled dynamics and actuator limitations of the free-floating SMS.
+
+## Files
+
+| File | Description |
+|---|---|
+| `main.m` | Initializes and runs the MPC simulation and generates plots |
+| `param.m` | Defines SMS physical parameters and MPC tuning parameters |
+| `Calc_rb.m` | Computes the initial base position from the system center-of-mass condition |
+| `SMS_dynamics_MPC.m` | Implements the nonlinear coupled SMS dynamics used by the MPC |
+| `MPC_Controller.m` | Computes the optimal control input using the receding-horizon MPC formulation |
+| `CostFunction.m` | Defines the MPC objective function for tracking performance and control effort |
+| `rk4t_MPC.m` | Fourth-order Runge-Kutta integration for the SMS dynamics |
