@@ -446,23 +446,23 @@ For controller design, the full dynamics are partitioned into base and manipulat
 
 $$
 \begin{bmatrix}
-H_{bb} & H_{bq}\\
+H_{bb} & H_{bq} \\
 H_{bq}^{T} & H_{qq}
 \end{bmatrix}
 \begin{bmatrix}
-\ddot{x}_b\\
+\ddot{x}_b \\
 \ddot{q}
 \end{bmatrix}
 +
 \begin{bmatrix}
-C_b\\
+C_b \\
 C_q
 \end{bmatrix}
 =
 \begin{bmatrix}
-0\\
+0 \\
 \tau_q
-\end{bmatrix}
+\end{bmatrix}.
 $$
 
 where
