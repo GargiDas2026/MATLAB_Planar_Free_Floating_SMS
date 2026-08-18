@@ -572,13 +572,17 @@ $$ \dot{s} = \ddot q+\Lambda\dot e.$$
 
 The desired sliding dynamics are selected as
 
-$$ \dot{s} = -K_s\,\operatorname{sat} (\frac{s}{\phi_s})$$
+```math
+\dot{s} = -K_s\,\mathrm{sat}\left(\frac{s}{\phi_s}\right)
+```
 
 where $K_s$ is the switching gain and $\phi_s$ defines a boundary layer around the sliding surface.
 
 Therefore, the desired joint acceleration is
 
-$$\ddot q_{\mathrm{des}} = -\Lambda\dot e - K_s\operatorname{sat} (\frac{s}{\phi_s}).$$
+```math
+\ddot q_{\mathrm{des}} = -\Lambda\dot e - K_s\mathrm{sat} (\frac{s}{\phi_s}).
+```
 
 Using the coupling-compensated reduced-order dynamics,
 
@@ -588,7 +592,7 @@ $$
 
 the SMC control torque is obtained as
 
-$$
+```math
 \boxed{
 \tau_q
 =
@@ -598,13 +602,13 @@ H_r
 \left[
 -\Lambda\dot e
 -
-K_s\operatorname{sat}
+K_s\mathrm{sat}
 \left(
 \frac{s}{\phi_s}
 \right)
 \right]
 }
-$$
+```
 
 which can be separated into an equivalent and switching component:
 
