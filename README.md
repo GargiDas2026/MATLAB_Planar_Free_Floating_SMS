@@ -813,4 +813,61 @@ $$
 \dot{x}=f(x,u).
 $$
 
-The nonlinear dynamics used by the MPC are the same coupled SMS dynamics used for simulation. The model therefore predicts both the manipulator motion and the reaction motion induced on the free-floating base. :contentReference[oaicite:1]{index=1}
+The nonlinear dynamics used by the MPC are the same coupled SMS dynamics used for simulation. The model therefore predicts both the manipulator motion and the reaction motion induced on the free-floating base.
+
+### Prediction Model
+
+At every MPC update, the current measured or simulated state $x_k$ is used as the initial condition.
+
+For a candidate control sequence
+
+```math
+U=
+\begin{bmatrix}
+u_0^T & u_1^T & \cdots & u_{N_p-1}^T
+\end{bmatrix}^{T},
+```
+
+the nonlinear model predicts the future states according to
+
+$$
+x_{i+1}=F(x_i,u_i),
+$$
+
+where $F(\cdot)$ is the discrete-time representation of the nonlinear SMS dynamics.
+
+The continuous-time dynamics are integrated using a fourth-order Runge-Kutta method:
+
+$$
+k_1=f(x_i,u_i)
+$$
+
+$$
+k_2=f(x_i+\frac{\Delta t}{2}k_1,u_i)
+$$
+
+$$
+k_3=f(x_i+\frac{\Delta t}{2}k_2,u_i)
+$$
+
+$$
+k_4=f(x_i+\Delta t k_3,u_i)
+$$
+
+and
+
+$$
+x_{i+1}
+=
+x_i+
+\frac{\Delta t}{6}
+(k_1+2k_2+2k_3+k_4).
+$$
+
+The implementation uses
+
+```math
+\Delta t=0.01~\mathrm{s}.
+```
+
+The RK4 integrator is implemented in `rk4t_MPC.m`. 
