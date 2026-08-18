@@ -856,13 +856,13 @@ $$
 
 and
 
-$$
+```math
 x_{i+1}
 =
 x_i+
 \frac{\Delta t}{6}
 (k_1+2k_2+2k_3+k_4).
-$$
+```
 
 The implementation uses
 
@@ -871,3 +871,72 @@ The implementation uses
 ```
 
 The RK4 integrator is implemented in `rk4t_MPC.m`. 
+
+### Finite-Horizon Optimization
+
+At every sampling instant, MPC solves for the sequence of future joint torques that minimizes a finite-horizon cost.
+
+The objective function is
+
+```math
+\boxed{
+J=
+\sum_{i=1}^{N_p}
+[
+(x_i-x_{\mathrm{ref}})^T
+Q
+(x_i-x_{\mathrm{ref}})
++
+u_i^T R u_i
+]
+}
+```
+
+where
+
+- $N_p$ is the prediction horizon,
+- $x_i$ is the predicted state,
+- $x_{\mathrm{ref}}$ is the desired state,
+- $Q$ weights state-tracking errors,
+- $R$ penalizes control effort.
+
+The reference state is
+
+```math
+x_{\mathrm{ref}}=0
+```
+
+except for the desired first joint configuration:
+
+```math
+q_{1,\mathrm{ref}}=0.872665~\mathrm{rad}
+\approx50^\circ,
+```
+
+while
+
+```math
+q_{2,\mathrm{ref}}=q_{3,\mathrm{ref}}=0.
+```
+
+The selected weighting matrices are
+
+```math
+Q=
+\mathrm{diag}
+\left(
+0,0,0,0,0,0,
+200,150,150,
+0,0,0,0,0,0,
+20,20,20
+\right)
+```
+
+and
+
+```math
+R=
+\mathrm{diag}(0.01,0.01,0.01).
+```
+
+Therefore, the MPC primarily penalizes manipulator joint-position error and joint velocity, while the spacecraft base states are not directly included in the tracking cost. The control penalty discourages unnecessarily large joint torques. 
