@@ -739,3 +739,78 @@ The SMC simulation is integrated using a fourth-order Runge-Kutta scheme with a 
 | `Calc_rb.m` | Computes the initial base position from the system center-of-mass condition |
 | `SMS_dynamics_SMC.m` | Implements the nonlinear coupled SMS dynamics and sliding-mode controller |
 | `rk4t_SMC.m` | Fourth-order Runge-Kutta integration |
+
+## Traditional Model Predictive Control (MPC)
+
+A nonlinear receding-horizon MPC using direct single shooting is implemented to perform constrained joint-space tracking of the free-floating Space Manipulator System (SMS).
+
+Unlike PID and SMC, which compute the control torque directly from the current tracking error, MPC predicts the future system evolution over a finite prediction horizon and determines an optimal sequence of joint torques. Only the first torque in the optimized sequence is applied to the system, after which the optimization is repeated using the updated state.
+
+The controller uses the complete nonlinear SMS dynamics, including the dynamic coupling between the spacecraft base and the manipulator.
+
+### State-Space Representation
+
+The generalized coordinates of the SMS are
+
+```math
+\Phi =
+\begin{bmatrix}
+x_b & y_b & z_b &
+\phi_b & \theta_b & \psi_b &
+q_1 & q_2 & q_3
+\end{bmatrix}^{T}
+```
+
+and the complete state is defined as
+
+```math
+x =
+\begin{bmatrix}
+\Phi\\
+\dot{\Phi}
+\end{bmatrix}
+\in\mathbb{R}^{18}.
+```
+
+Thus,
+
+```math
+x =
+\begin{bmatrix}
+x_b & y_b & z_b &
+\phi_b & \theta_b & \psi_b &
+q_1 & q_2 & q_3 &
+\dot{x}_b & \dot{y}_b & \dot{z}_b &
+\dot{\phi}_b & \dot{\theta}_b & \dot{\psi}_b &
+\dot q_1 & \dot q_2 & \dot q_3
+\end{bmatrix}^{T}.
+```
+
+The control input consists of the three manipulator joint torques:
+
+```math
+u=\tau_q=
+\begin{bmatrix}
+\tau_1 & \tau_2 & \tau_3
+\end{bmatrix}^{T}.
+```
+
+No direct control input is applied to the free-floating spacecraft base.
+
+The nonlinear SMS dynamics are written in the form
+
+```math
+H(\Phi)\ddot{\Phi}+C(\Phi,\dot{\Phi})=
+\begin{bmatrix}
+0_{6\times1}\\
+\tau_q
+\end{bmatrix},
+```
+
+which gives the continuous-time state-space model
+
+$$
+\dot{x}=f(x,u).
+$$
+
+The nonlinear dynamics used by the MPC are the same coupled SMS dynamics used for simulation. The model therefore predicts both the manipulator motion and the reaction motion induced on the free-floating base. :contentReference[oaicite:1]{index=1}
