@@ -482,14 +482,7 @@ $$
 
 and therefore
 
-$$
-\ddot{x}_b
-=
--H_{bb}^{-1}
-\left(
-H_{bq}\ddot{q}+C_b
-\right).
-$$
+$$ \ddot{x}_b = -H_{bb}^{-1} (H_{bq}\ddot{q}+C_b).$$
 
 Substituting this relation into the joint-space dynamics gives the coupling-compensated reduced-order model
 
