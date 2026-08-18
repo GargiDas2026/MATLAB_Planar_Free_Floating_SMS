@@ -99,8 +99,8 @@ Matlab_FK/
 
 with:
 
-- `Forward_kinematics_planar_FFSMS.m` — forward-kinematics implementation.
-- `Matlab_FK_Test.m` — forward-kinematics verification/testing.
+- `Forward_kinematics_planar_FFSMS.m` - forward-kinematics implementation.
+- `Matlab_FK_Test.m` - forward-kinematics verification/testing.
 
 The FK stage establishes the geometric relationship between the spacecraft
 base, manipulator configuration, and end-effector before introducing the
