@@ -558,11 +558,7 @@ which gives exponentially convergent tracking error dynamics.
 
 Differentiating the sliding surface gives
 
-$$
-\dot{s}
-=
-\ddot e+\Lambda\dot e.
-$$
+$$\dot{s} = \ddot e+\Lambda\dot e. $$
 
 For a constant desired joint configuration,
 
