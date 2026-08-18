@@ -406,3 +406,352 @@ The strong reduction in momentum drift with decreasing timestep indicates that t
 ![PID angular momentum](Planar_3_linkSMS_Controller/Results/PID/Angular_momentum.png)
 
 Therefore, the numerical dynamics model demonstrates conservation of total linear and angular momentum to within the expected numerical integration error for the RK4 simulation.
+
+## Sliding Mode Control (SMC)
+
+Sliding Mode Control (SMC) is implemented to provide robust joint-space tracking for the free-floating Space Manipulator System (SMS). Unlike the PID controller, the SMC formulation explicitly incorporates the dynamic coupling between the spacecraft base and the manipulator.
+
+The complete SMS dynamics are represented as
+
+$$
+H(\Phi)\ddot{\Phi}+C(\Phi,\dot{\Phi})=\tau
+$$
+
+where
+
+$$
+\Phi =
+\begin{bmatrix}
+x_b & y_b & z_b & \phi_b & \theta_b & \psi_b & q_1 & q_2 & q_3
+\end{bmatrix}^{T}
+$$
+
+is the generalized coordinate vector, $H$ is the inertia matrix, $C$ contains the velocity-dependent terms, and
+
+$$
+\tau =
+\begin{bmatrix}
+0_{6\times1}\\
+\tau_q
+\end{bmatrix}
+$$
+
+because the spacecraft base is free-floating and the actuators apply torques only at the manipulator joints.
+
+The equations of motion are obtained from the Lagrangian formulation of the free-floating SMS. Since gravity is neglected in the microgravity environment, the Lagrangian is equal to the kinetic energy of the system. The resulting inertia matrix naturally contains the base-manipulator coupling terms. 
+
+### Coupling-Compensated Reduced-Order Dynamics
+
+For controller design, the full dynamics are partitioned into base and manipulator components:
+
+$$
+\begin{bmatrix}
+H_{bb} & H_{bq}\\
+H_{bq}^{T} & H_{qq}
+\end{bmatrix}
+\begin{bmatrix}
+\ddot{x}_b\\
+\ddot{q}
+\end{bmatrix}
++
+\begin{bmatrix}
+C_b\\
+C_q
+\end{bmatrix}
+=
+\begin{bmatrix}
+0\\
+\tau_q
+\end{bmatrix}
+$$
+
+where
+
+- $x_b\in\mathbb{R}^{6}$ represents the base translational and rotational coordinates,
+- $q\in\mathbb{R}^{3}$ represents the manipulator joint coordinates,
+- $H_{bb}$ is the base inertia matrix,
+- $H_{bq}$ represents base-manipulator inertial coupling,
+- $H_{qq}$ is the joint-space inertia matrix.
+
+Since no external control torque is applied to the free-floating base,
+
+$$
+H_{bb}\ddot{x}_b+H_{bq}\ddot{q}+C_b=0
+$$
+
+and therefore
+
+$$
+\ddot{x}_b
+=
+-H_{bb}^{-1}
+\left(
+H_{bq}\ddot{q}+C_b
+\right).
+$$
+
+Substituting this relation into the joint-space dynamics gives the coupling-compensated reduced-order model
+
+$$
+H_r(q)\ddot{q}+C_r(q,\dot q)=\tau_q
+$$
+
+where
+
+$$ H_r = H_{qq} - H_{bq}^{T}H_{bb}^{-1}H_{bq} $$
+
+and
+
+$$ C_r = C_q - H_{bq}^{T}H_{bb}^{-1}C_b. $$
+
+This reduction is important for the free-floating SMS because manipulator motion induces spacecraft base motion through conservation of momentum. The base motion is therefore not independently controlled; instead, its effect is incorporated into the reduced joint dynamics through the coupling terms.
+
+### Sliding Surface
+
+The tracking error is defined as
+
+$$
+e=q-q_d
+$$
+
+and
+
+$$
+\dot e=\dot q-\dot q_d.
+$$
+
+For the rest-to-rest tracking task considered here,
+
+$$
+\dot q_d=0.
+$$
+
+A first-order sliding surface is selected as
+
+$$
+s=\dot e+\Lambda e
+$$
+
+where
+
+$$
+\Lambda=5I_{3}.
+$$
+
+Thus,
+
+$$
+s=
+\dot q-\dot q_d+
+\Lambda(q-q_d).
+$$
+
+When the system reaches the sliding manifold,
+
+$$
+s=0,
+$$
+
+the tracking error follows
+
+$$
+\dot e+\Lambda e=0,
+$$
+
+which gives exponentially convergent tracking error dynamics.
+
+### SMC Control Law
+
+Differentiating the sliding surface gives
+
+$$
+\dot{s}
+=
+\ddot e+\Lambda\dot e.
+$$
+
+For a constant desired joint configuration,
+
+$$
+\ddot e=\ddot q
+$$
+
+and therefore
+
+$$
+\dot{s}
+=
+\ddot q+\Lambda\dot e.
+$$
+
+The desired sliding dynamics are selected as
+
+$$
+\dot{s}
+=
+-K_s\,\operatorname{sat}
+\left(
+\frac{s}{\phi_s}
+\right)
+$$
+
+where $K_s$ is the switching gain and $\phi_s$ defines a boundary layer around the sliding surface.
+
+Therefore, the desired joint acceleration is
+
+$$
+\ddot q_{\mathrm{des}}
+=
+-\Lambda\dot e
+-
+K_s\operatorname{sat}
+\left(
+\frac{s}{\phi_s}
+\right).
+$$
+
+Using the coupling-compensated reduced-order dynamics,
+
+$$
+H_r\ddot q+C_r=\tau_q,
+$$
+
+the SMC control torque is obtained as
+
+$$
+\boxed{
+\tau_q
+=
+C_r
++
+H_r
+\left[
+-\Lambda\dot e
+-
+K_s\operatorname{sat}
+\left(
+\frac{s}{\phi_s}
+\right)
+\right]
+}
+$$
+
+which can be separated into an equivalent and switching component:
+
+$$
+\tau_q
+=
+\tau_{\mathrm{eq}}
++
+\tau_{\mathrm{sw}}
+$$
+
+with
+
+$$
+\tau_{\mathrm{eq}}
+=
+C_r-H_r\Lambda\dot e
+$$
+
+and
+
+$$
+\tau_{\mathrm{sw}}
+=
+-H_rK_s
+\operatorname{sat}
+\left(
+\frac{s}{\phi_s}
+\right).
+$$
+
+### Boundary-Layer Switching
+
+To reduce the high-frequency chattering associated with the ideal sign function, the discontinuous switching term is replaced by a saturation function:
+
+$$
+\operatorname{sat}(z)=
+\begin{cases}
+-1, & z<-1\\
+z, & |z|\leq1\\
+1, & z>1.
+\end{cases}
+$$
+
+The resulting implementation is
+
+$$
+\operatorname{sat}
+\left(
+\frac{s_i}{\phi_{s,i}}
+\right)
+=
+\begin{cases}
+-1, & s_i<-\phi_{s,i}\\
+\dfrac{s_i}{\phi_{s,i}}, & |s_i|\leq\phi_{s,i}\\
+1, & s_i>\phi_{s,i}.
+\end{cases}
+$$
+
+The selected SMC parameters are
+
+$$
+\Lambda=5I_3,
+$$
+
+$$
+K_s=
+\begin{bmatrix}
+2\\2\\2
+\end{bmatrix},
+$$
+
+and
+
+$$
+\phi_s=
+\begin{bmatrix}
+0.05\\0.05\\0.05
+\end{bmatrix}.
+$$
+
+The commanded joint torques are additionally constrained by the actuator limits
+
+$$
+|\tau_{q_1}|\leq5~\mathrm{Nm},
+$$
+
+$$
+|\tau_{q_2}|\leq2.5~\mathrm{Nm},
+\qquad
+|\tau_{q_3}|\leq2.5~\mathrm{Nm}.
+$$
+
+These limits are applied after computing the SMC control torque.
+
+### SMC Implementation Summary
+
+The implemented control architecture can therefore be summarized as
+
+$$
+\boxed{
+\begin{aligned}
+e &= q-q_d\\
+s &= \dot e+\Lambda e\\
+H_r &= H_{qq}-H_{bq}^{T}H_{bb}^{-1}H_{bq}\\
+C_r &= C_q-H_{bq}^{T}H_{bb}^{-1}C_b\\
+\tau_q &=
+C_r+
+H_r
+\left[
+-\Lambda\dot e
+-K_s\operatorname{sat}\left(\frac{s}{\phi_s}\right)
+\right].
+\end{aligned}
+}
+$$
+
+The resulting torque is applied only to the three manipulator joints, while the spacecraft base remains dynamically free. Consequently, the base translation and rotation observed during the simulation arise naturally from the reaction motion associated with manipulator actuation and the conservation of system momentum.
+
+The SMC simulation is integrated using a fourth-order Runge-Kutta scheme with a simulation step of $0.01$ s. The controller returns both the joint torque and sliding-surface variables for evaluating the closed-loop response.
