@@ -444,7 +444,7 @@ The equations of motion are obtained from the Lagrangian formulation of the free
 
 For controller design, the full dynamics are partitioned into base and manipulator components:
 
-$$
+```math
 \begin{bmatrix}
 H_{bb} & H_{bq} \\
 H_{bq}^{T} & H_{qq}
@@ -462,8 +462,9 @@ C_q
 \begin{bmatrix}
 0 \\
 \tau_q
-\end{bmatrix}.
-$$
+\end{bmatrix}
+```
+
 
 where
 
