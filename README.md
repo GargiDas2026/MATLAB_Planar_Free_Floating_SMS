@@ -55,31 +55,31 @@ The complete derivation of the free-floating space manipulator equations of moti
 
 The repository follows a progressive controller-development workflow:
 
-### Stage 1 — Forward Kinematics
+### Stage 1 - Forward Kinematics
 
 Verification of the planar free-floating SMS geometry and end-effector
 kinematics.
 
-### Stage 2 — Dynamic Modeling
+### Stage 2 - Dynamic Modeling
 
 Derivation and implementation of the coupled spacecraft-manipulator dynamics,
 including the dynamic coupling between manipulator motion and spacecraft-base
 motion.
 
-### Stage 3 — PID Control
+### Stage 3 - PID Control
 
 Development of a classical PID controller as an initial control baseline.
 
-### Stage 4 — Sliding Mode Control
+### Stage 4 - Sliding Mode Control
 
 Development of a nonlinear Sliding Mode Controller for the SMS.
 
-### Stage 5 — Traditional MPC
+### Stage 5 - Traditional MPC
 
 Development of a nonlinear single-shooting MPC using MATLAB numerical
 optimization (`fmincon`).
 
-### Stage 6 — CasADi MPC
+### Stage 6 - CasADi MPC
 
 Replacement of the repeated numerical optimization-model evaluations with a
 CasADi symbolic model and automatic differentiation.
