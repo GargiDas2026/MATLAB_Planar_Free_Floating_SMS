@@ -708,7 +708,7 @@ These limits are applied after computing the SMC control torque.
 
 The implemented control architecture can therefore be summarized as
 
-$$
+```math
 \boxed{
 \begin{aligned}
 e &= q-q_d\\
@@ -720,11 +720,11 @@ C_r+
 H_r
 \left[
 -\Lambda\dot e
--K_s\operatorname{sat}\left(\frac{s}{\phi_s}\right)
+-K_s\mathrm{sat}\left(\frac{s}{\phi_s}\right)
 \right].
 \end{aligned}
 }
-$$
+```
 
 The resulting torque is applied only to the three manipulator joints, while the spacecraft base remains dynamically free. Consequently, the base translation and rotation observed during the simulation arise naturally from the reaction motion associated with manipulator actuation and the conservation of system momentum.
 
