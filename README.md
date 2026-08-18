@@ -729,3 +729,13 @@ H_r
 The resulting torque is applied only to the three manipulator joints, while the spacecraft base remains dynamically free. Consequently, the base translation and rotation observed during the simulation arise naturally from the reaction motion associated with manipulator actuation and the conservation of system momentum.
 
 The SMC simulation is integrated using a fourth-order Runge-Kutta scheme with a simulation step of $0.01$ s. The controller returns both the joint torque and sliding-surface variables for evaluating the closed-loop response.
+
+## Files
+
+| File | Description |
+|---|---|
+| `main.m` | Initializes and runs the SMC simulation and generates plots |
+| `param.m` | Defines SMS physical parameters and sliding-mode controller gains |
+| `Calc_rb.m` | Computes the initial base position from the system center-of-mass condition |
+| `SMS_dynamics_SMC.m` | Implements the nonlinear coupled SMS dynamics and sliding-mode controller |
+| `rk4t_SMC.m` | Fourth-order Runge-Kutta integration |
