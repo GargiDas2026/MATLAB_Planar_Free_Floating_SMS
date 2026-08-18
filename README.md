@@ -568,37 +568,17 @@ $$
 
 and therefore
 
-$$
-\dot{s}
-=
-\ddot q+\Lambda\dot e.
-$$
+$$ \dot{s} = \ddot q+\Lambda\dot e.$$
 
 The desired sliding dynamics are selected as
 
-$$
-\dot{s}
-=
--K_s\,\operatorname{sat}
-\left(
-\frac{s}{\phi_s}
-\right)
-$$
+$$ \dot{s} = -K_s\,\operatorname{sat} (\frac{s}{\phi_s})$$
 
 where $K_s$ is the switching gain and $\phi_s$ defines a boundary layer around the sliding surface.
 
 Therefore, the desired joint acceleration is
 
-$$
-\ddot q_{\mathrm{des}}
-=
--\Lambda\dot e
--
-K_s\operatorname{sat}
-\left(
-\frac{s}{\phi_s}
-\right).
-$$
+$$\ddot q_{\mathrm{des}} = -\Lambda\dot e - K_s\operatorname{sat} (\frac{s}{\phi_s}).$$
 
 Using the coupling-compensated reduced-order dynamics,
 
