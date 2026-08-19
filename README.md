@@ -1140,3 +1140,444 @@ The controller therefore moves from instantaneous feedback control toward **opti
 | `MPC_Controller.m` | Computes the optimal control input using the receding-horizon MPC formulation |
 | `CostFunction.m` | Defines the MPC objective function for tracking performance and control effort |
 | `rk4t_MPC.m` | Fourth-order Runge-Kutta integration for the SMS dynamics |
+
+---
+
+## CasADi + SQP Nonlinear MPC
+
+The final controller in the current development replaces the MATLAB `fmincon` optimization framework with a **CasADi-based nonlinear programming formulation and SQP solver**.
+
+The fundamental MPC formulation remains the same as the traditional nonlinear MPC:
+
+- nonlinear SMS prediction,
+- RK4 integration,
+- finite-horizon cost,
+- joint torque constraints,
+- single-shooting formulation,
+- receding-horizon control.
+
+The main difference is the computational framework used to construct and solve the nonlinear optimization problem.
+
+The implementation is located in:
+
+```text
+Planar_3_linkSMS_Controller/MPC_using_CasADi_SQP/
+├── BuildSolver.m
+├── Calc_rb.m
+├── main.m
+├── MPC_Controller_Casadi.m
+├── param.m
+├── rk4t_Casadi.m
+└── SMS_Model_Casadi.m
+```
+
+### CasADi-Based SMS Model
+
+The nonlinear SMS dynamics are constructed using CasADi symbolic variables.
+
+The generalized momentum is
+
+```math
+p=
+\frac{\partial T}{\partial\dot\Phi}.
+```
+
+The inertia matrix is obtained using automatic differentiation:
+
+```math
+H=
+\frac{\partial p}{\partial\dot\Phi}.
+```
+
+The remaining nonlinear terms are
+
+```math
+C=
+\frac{\partial p}{\partial\Phi}\dot\Phi
+-
+\frac{\partial T}{\partial\Phi}.
+```
+
+The dynamics are therefore
+
+```math
+H(\Phi)\ddot\Phi+C(\Phi,\dot\Phi)=\tau
+```
+
+and
+
+```math
+\ddot\Phi
+=
+H^{-1}
+(\tau-C).
+```
+
+The CasADi model is implemented in `SMS_Model_Casadi.m`.
+
+### Automatic Differentiation
+
+CasADi automatically differentiates the symbolic model.
+
+For example:
+
+```matlab
+p = gradient(T,dPhi);
+
+H = jacobian(p,dPhi);
+```
+
+The remaining dynamic terms are generated from the same symbolic expressions.
+
+This avoids manually constructing large analytical derivative expressions and allows the derivatives required by the nonlinear optimizer to be generated automatically.
+
+### RK4 Prediction
+
+The continuous-time model
+
+$$
+\dot{x}=f(x,u)
+$$
+
+is discretized using fourth-order Runge-Kutta integration:
+
+```math
+k_1=f(x_k,u_k)
+```
+
+```math
+k_2=
+f\left(
+x_k+\frac{\Delta t}{2}k_1,u_k
+\right)
+```
+
+```math
+k_3=
+f\left(
+x_k+\frac{\Delta t}{2}k_2,u_k
+\right)
+```
+
+```math
+k_4=
+f\left(
+x_k+\Delta t k_3,u_k
+\right)
+```
+
+and
+
+```math
+x_{k+1}
+=
+x_k+
+\frac{\Delta t}{6}
+(k_1+2k_2+2k_3+k_4).
+```
+
+The implementation uses
+
+```math
+\Delta t=0.01~\mathrm{s}.
+```
+
+### MPC Prediction Horizon
+
+The CasADi MPC uses
+
+$$
+N_p=12
+$$
+
+prediction steps.
+
+With
+
+```math
+\Delta t=0.01~\mathrm{s},
+```
+
+the prediction window is
+
+```math
+T_p=N_p\Delta t
+=0.12~\mathrm{s}.
+```
+
+Since there are three control inputs,
+
+$$
+n_u=3,
+$$
+
+the number of optimization variables is
+
+$$
+N_pn_u=12\times3=36.
+$$
+
+Thus,
+
+```math
+U\in\mathbb{R}^{36}.
+```
+
+### Cost Function
+
+The finite-horizon objective is
+
+```math
+J=
+\sum_{i=1}^{N_p}
+\left[
+(x_i-x_{\mathrm{ref}})^TQ(x_i-x_{\mathrm{ref}})
++
+u_i^TRu_i
+\right].
+```
+
+The implemented weighting matrices are
+
+```math
+Q=
+\mathrm{diag}
+\left(
+0,0,0,0,0,0,
+200,150,150,
+0,0,0,0,0,0,
+20,20,20
+\right)
+```
+
+and
+
+```math
+R=
+\mathrm{diag}(0.01,0.01,0.01).
+```
+
+### Input Constraints
+
+The actuator limits are
+
+```math
+-5\leq\tau_1\leq5~\mathrm{Nm},
+```
+
+```math
+-2.5\leq\tau_2\leq2.5~\mathrm{Nm},
+```
+
+```math
+-2.5\leq\tau_3\leq2.5~\mathrm{Nm}.
+```
+
+These limits are applied across the entire prediction horizon.
+
+### CasADi NLP
+
+The optimization variables are the future torque sequence:
+
+```math
+U=
+\begin{bmatrix}
+u_0\\
+u_1\\
+\vdots\\
+u_{N_p-1}
+\end{bmatrix}.
+```
+
+The current state and reference are supplied as parameters:
+
+```math
+P=
+\begin{bmatrix}
+x_0\\
+x_{\mathrm{ref}}
+\end{bmatrix}.
+```
+
+The nonlinear program is
+
+```math
+\boxed{
+\begin{aligned}
+\min_U\quad&
+J(U,x_0,x_{\mathrm{ref}})
+\\
+\text{subject to}\quad&
+LB\leq U\leq UB.
+\end{aligned}
+}
+```
+
+The predicted states are generated internally through nonlinear RK4 propagation, so the formulation remains a single-shooting MPC problem.
+
+### SQP Solver
+
+The active optimization method is CasADi's SQP solver:
+
+```matlab
+opts = struct;
+
+opts.max_iter = 50;
+
+opts.qpsol = 'qrqp';
+```
+
+The solver is created using:
+
+```matlab
+solver = nlpsol( ...
+    'solver', ...
+    'sqpmethod', ...
+    nlp, ...
+    opts);
+```
+
+Thus, the computational structure is
+
+$$
+\boxed{
+\text{Nonlinear NLP}
+\rightarrow
+\text{SQP}
+\rightarrow
+\text{QRQP}
+}
+$$
+
+The active implementation uses the SQP solver with its exact Hessian treatment. Alternative Hessian approximations were investigated during development but are not part of the frozen working implementation.
+
+### Solver Construction and Online Operation
+
+The solver is constructed once rather than rebuilding the symbolic model at every MPC step.
+
+The initialization sequence is:
+
+```text
+CasADi symbolic variables
+        ↓
+Nonlinear SMS model
+        ↓
+RK4 prediction model
+        ↓
+MPC cost function
+        ↓
+NLP construction
+        ↓
+SQP + QRQP solver
+```
+
+During online operation, only the numerical parameters such as the current state and reference are updated.
+
+### Warm Starting
+
+The previous optimal torque sequence is shifted forward and used as the initial guess for the next optimization:
+
+```math
+U_k^{(0)}
+=
+\begin{bmatrix}
+u_1^*&
+u_2^*&
+\cdots&
+u_{N_p-1}^*&
+u_{N_p-1}^*
+\end{bmatrix}^{T}.
+```
+
+This provides the SQP solver with a starting point close to the expected solution.
+
+### Receding-Horizon Control
+
+After optimization,
+
+```math
+U^*
+=
+\begin{bmatrix}
+u_0^*&
+u_1^*&
+\cdots&
+u_{N_p-1}^*
+\end{bmatrix}^{T},
+```
+
+only the first torque is applied:
+
+```math
+\boxed{
+u_k=u_0^*
+}
+```
+
+The SMS is then propagated for one timestep:
+
+```math
+x_{k+1}=F(x_k,u_k).
+```
+
+The optimization is repeated using the updated state.
+
+### Computational Performance
+
+The CasADi + SQP implementation was developed to improve the computational efficiency of the nonlinear MPC implementation.
+
+The symbolic model and NLP are constructed once, while the online loop repeatedly evaluates the already constructed solver.
+
+For the tested configuration, the frozen SQP implementation was substantially faster than the traditional `fmincon` implementation.
+
+The online MPC computation time is recorded at each control step.
+
+### Traditional MPC vs. CasADi + SQP
+
+| Feature | Traditional MPC | CasADi + SQP MPC |
+|:--|:--|:--|
+| SMS model | Nonlinear | Nonlinear |
+| Prediction | RK4 | RK4 |
+| Formulation | Single shooting | Single shooting |
+| Sampling time | 0.01 s | 0.01 s |
+| Prediction horizon | 15 | 12 |
+| Optimization variables | 45 | 36 |
+| Optimizer | MATLAB `fmincon` | CasADi `sqpmethod` |
+| QP solver | Internal | `qrqp` |
+| Automatic differentiation | No | Yes |
+| Symbolic dynamics | No | Yes |
+| Warm start | Yes | Yes |
+| Torque constraints | Yes | Yes |
+
+The key transition is from a MATLAB-based nonlinear optimization implementation to a symbolic and automatically differentiated nonlinear MPC implementation.
+
+---
+
+## Overall Control Development
+
+The complete project therefore progresses from basic kinematic verification to increasingly sophisticated control methods:
+
+```text
+Forward Kinematics
+        ↓
+Dynamic SMS Model
+        ↓
+PID
+        ↓
+Sliding Mode Control
+        ↓
+Traditional Nonlinear MPC
+        ↓
+CasADi + SQP Nonlinear MPC
+```
+
+The progression demonstrates the transition from direct feedback control toward model-based predictive control and finally toward a symbolic, automatically differentiated nonlinear optimization framework.
+
+The current CasADi + SQP implementation provides the foundation for future extensions such as:
+
+- additional state constraints,
+- collision avoidance,
+- dynamic-coupling-aware MPC objectives,
+- control allocation,
+- nonlinear terminal costs,
+- improved real-time performance.
